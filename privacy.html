@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maxfiylik siyosati — TIMART.UZ</title>
+<style>
+  :root {
+    --navy: #0D1526; --navy-2: #111E35; --navy-3: #172440;
+    --gold: #C9A84C; --gold-l: #E8CC7A; --jade: #2ECC8A; --red: #E84B6A; --amber: #F5A623;
+    --white: #FFFFFF; --slate-1: #F0F4FF; --slate-2: #D8E0F0; --slate-3: #9AAAC8; --slate-4: #5A6E8C; --slate-5: #2A3A55;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--navy); color: var(--slate-2); font-family: -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.6; }
+  .topbar { position: sticky; top: 0; display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--navy-2); border-bottom: 1px solid var(--slate-5); z-index: 10; }
+  .topbar a { color: var(--slate-2); text-decoration: none; font-size: 22px; }
+  .topbar h1 { font-size: 16px; font-weight: 700; color: var(--white); }
+  .content { max-width: 680px; margin: 0 auto; padding: 24px 18px 60px; }
+  .updated { color: var(--slate-4); font-size: 12.5px; margin-bottom: 24px; }
+  h2 { color: var(--gold); font-size: 16px; margin: 28px 0 10px; border-left: 3px solid var(--gold); padding-left: 10px; }
+  p, li { font-size: 14px; color: var(--slate-2); margin-bottom: 8px; }
+  ul { padding-left: 20px; margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--slate-5); }
+  th { color: var(--gold); font-weight: 600; }
+  .highlight { background: rgba(46,204,138,.08); border: 1px solid rgba(46,204,138,.2); border-radius: 10px; padding: 14px; margin: 16px 0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="javascript:history.back()">←</a>
+    <h1>Maxfiylik siyosati</h1>
+  </div>
+  <div class="content">
+    <p class="updated">Oxirgi yangilanish: 2026-yil iyun</p>
+
+    <p>TIMART.UZ sizning shaxsiy ma'lumotlaringizni himoya qilishni jiddiy qabul qiladi. Bu sahifa qanday ma'lumot to'planishini va undan qanday foydalanilishini tushuntiradi.</p>
+
+    <h2>1. Qanday ma'lumot to'planadi</h2>
+    <table>
+      <tr><th>Ma'lumot turi</th><th>Maqsad</th></tr>
+      <tr><td>Ism, telefon raqami</td><td>Buyurtma va aloqa uchun</td></tr>
+      <tr><td>Yetkazib berish manzili</td><td>Mahsulotni yetkazish uchun</td></tr>
+      <tr><td>To'lov cheki (rasm)</td><td>To'lovni tasdiqlash uchun, sotuvchiga ko'rsatiladi</td></tr>
+      <tr><td>Profil rasmi (ixtiyoriy)</td><td>Shaxsni tanitish uchun</td></tr>
+      <tr><td>Joylashuv (qibla/masjid qidiruv uchun)</td><td>Faqat shu funksiyalar uchun, faqat ruxsat berilganda</td></tr>
+    </table>
+
+    <h2>2. Ma'lumot qayerda saqlanadi</h2>
+    <p>Hozirgi prototip bosqichida ma'lumotlar sizning <strong>shaxsiy brauzeringizda</strong> (localStorage) saqlanadi — bu ma'lumotlar serverga yuborilmaydi va boshqa qurilmada ko'rinmaydi. Platforma to'liq ishga tushganda, ma'lumotlar shifrlangan serverda (Firebase) saqlanadi va shu bo'limga tegishli yangilanish kiritiladi.</p>
+
+    <h2>3. Ma'lumot kim bilan baham ko'riladi</h2>
+    <ul>
+      <li><strong>Sotuvchi</strong> — ism, telefon, manzil va to'lov chekingizni ko'radi (faqat siz xarid qilgan mahsulot bo'yicha)</li>
+      <li><strong>Admin</strong> — nizo yuzaga kelganda, ko'rib chiqish uchun tegishli ma'lumotlarga kirishi mumkin</li>
+      <li><strong>Uchinchi tomon</strong> — ma'lumotlaringiz reklama kompaniyalariga sotilmaydi yoki ulashilmaydi</li>
+    </ul>
+
+    <h2>4. Sizning huquqlaringiz</h2>
+    <ul>
+      <li>O'z ma'lumotlaringizni ko'rish va tahrirlash (Profil sahifasi orqali)</li>
+      <li>Hisobni o'chirishni so'rash</li>
+      <li>Ma'lumotlaringiz qanday ishlatilishi haqida so'rov yuborish</li>
+    </ul>
+
+    <h2>5. Xavfsizlik</h2>
+    <p>To'lov cheklari va shaxsiy ma'lumotlar faqat tegishli tomonlarga (sotuvchi, admin) ko'rinadi. Platforma xavfsizlikni ta'minlash uchun choralar ko'radi, lekin internetda 100% xavfsizlik kafolati mavjud emas.</p>
+
+    <div class="highlight">Diniy/shaxsiy ma'lumotlar (masalan, masjid qidiruv tarixi) faqat shu funksiya doirasida ishlatiladi va boshqa maqsadda foydalanilmaydi.</div>
+
+    <h2>6. Aloqa</h2>
+    <p>Maxfiylik bo'yicha savollar uchun: Telegram orqali admin bilan bog'lanish.</p>
+  </div>
+</body>
+</html>

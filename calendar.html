@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To'liq kalendar — TIMART.UZ</title>
+<style>
+  :root {
+    --navy: #0D1526; --navy-2: #111E35; --navy-3: #172440;
+    --gold: #C9A84C; --gold-l: #E8CC7A; --jade: #2ECC8A; --red: #E84B6A; --amber: #F5A623;
+    --white: #FFFFFF; --slate-1: #F0F4FF; --slate-2: #D8E0F0; --slate-3: #9AAAC8; --slate-4: #5A6E8C; --slate-5: #2A3A55;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--navy); color: var(--slate-2); font-family: -apple-system, "Segoe UI", Roboto, sans-serif; padding-bottom: 30px; }
+  .topbar { position: sticky; top: 0; display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--navy-2); border-bottom: 1px solid var(--slate-5); z-index: 10; }
+  .topbar a { color: var(--slate-2); text-decoration: none; font-size: 22px; }
+  .topbar h1 { font-size: 16px; font-weight: 700; color: var(--white); }
+  .content { max-width: 480px; margin: 0 auto; padding: 16px; }
+
+  .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .cal-nav-btn { background: var(--navy-3); border: 1px solid var(--slate-5); color: var(--slate-2); width: 36px; height: 36px; border-radius: 10px; font-size: 18px; cursor: pointer; }
+  .cal-month-label { font-size: 17px; font-weight: 700; color: var(--white); text-align: center; }
+  .cal-today-btn { background: rgba(201,168,76,.12); border: 1px solid var(--gold-d); color: var(--gold); border-radius: 8px; padding: 5px 10px; font-size: 12px; cursor: pointer; }
+
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-weekday { text-align: center; font-size: 11px; color: var(--slate-4); padding-bottom: 6px; font-weight: 600; }
+  .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; position: relative; font-size: 13px; color: var(--slate-2); background: var(--navy-2); }
+  .cal-day.other-month { opacity: .25; cursor: default; }
+  .cal-day.today { border: 2px solid var(--gold); font-weight: 700; color: var(--white); }
+  .cal-day.selected { background: var(--gold); color: var(--navy); font-weight: 700; }
+  .cal-day .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--jade); margin-top: 2px; }
+  .cal-day.selected .dot { background: var(--navy); }
+
+  .cal-legend { display: flex; gap: 14px; justify-content: center; margin: 16px 0; flex-wrap: wrap; }
+  .cal-legend span { font-size: 11px; color: var(--slate-4); display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .cal-events { margin-top: 8px; }
+  .cal-event-card { background: var(--navy-2); border: 1px solid var(--slate-5); border-radius: 12px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+  .cal-event-icon { font-size: 24px; }
+  .cal-event-name { font-size: 14px; font-weight: 600; color: var(--white); }
+  .cal-event-date { font-size: 12px; color: var(--slate-4); }
+  .cal-empty { text-align: center; color: var(--slate-4); font-size: 13px; padding: 24px 0; }
+  .cal-ics-btn { background: none; border: 1px solid var(--slate-5); color: var(--slate-3); border-radius: 8px; padding: 6px 10px; font-size: 16px; cursor: pointer; margin-left: auto; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="javascript:history.back()">←</a>
+    <h1>📅 To'liq diaspora kalendari</h1>
+  </div>
+  <div class="content">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+      <div>
+        <div class="cal-month-label" id="cal-month-label"></div>
+        <div style="text-align:center;margin-top:4px"><button class="cal-today-btn" onclick="goToToday()">Bugun</button></div>
+      </div>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+
+    <div class="cal-grid" id="cal-weekdays"></div>
+    <div class="cal-grid" id="cal-grid" style="margin-top:6px"></div>
+
+    <div class="cal-legend">
+      <span><span class="legend-dot" style="background:#9b5de5"></span>Islom</span>
+      <span><span class="legend-dot" style="background:#2ECC8A"></span>O'zbekiston</span>
+      <span><span class="legend-dot" style="background:#4A9EF5"></span>Koreya</span>
+    </div>
+
+    <h3 style="font-size:14px;color:var(--white);margin-bottom:10px" id="cal-events-title">Voqealar</h3>
+    <div class="cal-events" id="cal-events-list"></div>
+  </div>
+
+  <script src="common.js"></script>
+  <script>
+    let calYear, calMonth, calSelectedDate;
+    const UZ_MONTHS_FULL = ["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentyabr","Oktyabr","Noyabr","Dekabr"];
+    const UZ_WEEKDAYS_SHORT = ["Yak","Dush","Sesh","Chor","Pay","Jum","Shan"];
+    const TYPE_COLORS = { islamic: "#9b5de5", uzbek: "#2ECC8A", korean: "#4A9EF5" };
+
+    function pad(n) { return String(n).padStart(2,"0"); }
+    function dateKey(y,m,d) { return `${y}-${pad(m+1)}-${pad(d)}`; }
+
+    function getEventsForDate(key) {
+      return TimartShared.getCalendarEvents(false).filter(e => e.date === key);
+    }
+
+    function renderCalendar() {
+      document.getElementById("cal-month-label").textContent = `${UZ_MONTHS_FULL[calMonth]} ${calYear}`;
+      document.getElementById("cal-weekdays").innerHTML = UZ_WEEKDAYS_SHORT.map(w => `<div class="cal-weekday">${w}</div>`).join("");
+
+      const firstDay = new Date(calYear, calMonth, 1).getDay();
+      const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+      const daysInPrevMonth = new Date(calYear, calMonth, 0).getDate();
+      const todayKey = dateKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+
+      let cells = [];
+      for (let i = firstDay-1; i >= 0; i--) cells.push({ day: daysInPrevMonth-i, otherMonth: true });
+      for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, otherMonth: false });
+      while (cells.length % 7 !== 0) cells.push({ day: cells.length - (firstDay+daysInMonth) + 1, otherMonth: true });
+
+      document.getElementById("cal-grid").innerHTML = cells.map(c => {
+        if (c.otherMonth) return `<div class="cal-day other-month">${c.day}</div>`;
+        const key = dateKey(calYear, calMonth, c.day);
+        const events = getEventsForDate(key);
+        const isToday = key === todayKey;
+        const isSelected = key === calSelectedDate;
+        return `<div class="cal-day ${isToday?'today':''} ${isSelected?'selected':''}" onclick="selectDate('${key}')">
+          ${c.day}${events.length ? `<div class="dot" style="background:${TYPE_COLORS[events[0].type]||'#9AAAC8'}"></div>` : ''}
+        </div>`;
+      }).join("");
+    }
+
+    function selectDate(key) {
+      calSelectedDate = key;
+      renderCalendar();
+      renderEventsForSelected();
+    }
+
+    function renderEventsForSelected() {
+      const events = calSelectedDate ? getEventsForDate(calSelectedDate) : [];
+      const titleEl = document.getElementById("cal-events-title");
+      const [y,m,d] = (calSelectedDate||"").split("-");
+      titleEl.textContent = calSelectedDate ? `${d}-${UZ_MONTHS_FULL[parseInt(m)-1]} voqealari` : "Voqealar";
+      const typeIcon = { islamic:"☪️", uzbek:"🇺🇿", korean:"🇰🇷" };
+      document.getElementById("cal-events-list").innerHTML = events.map(e => `
+        <div class="cal-event-card">
+          <div class="cal-event-icon">${typeIcon[e.type]||"📌"}</div>
+          <div>
+            <div class="cal-event-name">${e.name}</div>
+            <div class="cal-event-date">${e.date}</div>
+          </div>
+          <button class="cal-ics-btn" title="Kalendarga qo'shish" onclick="Utils.downloadICS('${e.name.replace(/'/g,"")}','${e.date}','TIMART diaspora kalendari')">📅+</button>
+        </div>`).join("") || `<p class="cal-empty">${calSelectedDate ? "Bu kunda voqea yo'q" : "Kun tanlang"}</p>`;
+    }
+
+    function changeMonth(delta) {
+      calMonth += delta;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      if (calMonth < 0) { calMonth = 11; calYear--; }
+      renderCalendar();
+    }
+
+    function goToToday() {
+      const now = new Date();
+      calYear = now.getFullYear();
+      calMonth = now.getMonth();
+      selectDate(dateKey(calYear, calMonth, now.getDate()));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const now = new Date();
+      calYear = now.getFullYear();
+      calMonth = now.getMonth();
+      calSelectedDate = dateKey(calYear, calMonth, now.getDate());
+      renderCalendar();
+      renderEventsForSelected();
+    });
+  </script>
+</body>
+</html>
