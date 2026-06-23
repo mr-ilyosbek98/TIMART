@@ -42,3 +42,4 @@ Korea-based o'zbek diasporasi uchun marketplace. Bu **statik frontend prototip**
 - G'arar-siz stock-lock — `chat.html`, `index.html`
 
 Test qilish uchun: bir vargada `business.html`dan so'rov yuboring → `admin.html`ga o'ting → "Shariat kengashi" tabida ko'ring va tasdiqlang/rad eting.
+CodeRabbit test
